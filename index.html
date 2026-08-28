@@ -85,6 +85,18 @@
   @keyframes pulseDot{
     0%{box-shadow:0 0 0 0 rgba(63,195,211,.55);} 70%{box-shadow:0 0 0 8px rgba(63,195,211,0);} 100%{box-shadow:0 0 0 0 rgba(63,195,211,0);}
   }
+  .mini-player{position:fixed; left:50%; bottom:22px; z-index:200; display:flex; align-items:center; gap:18px; width:min(520px, calc(100vw - 32px)); padding:12px 14px 12px 18px; border:1px solid rgba(159,232,239,.26); border-radius:12px; background:rgba(11,23,33,.94); box-shadow:0 20px 50px rgba(0,0,0,.42); backdrop-filter:blur(14px); transform:translate(-50%, calc(100% + 30px)); opacity:0; pointer-events:none; transition:transform .35s ease, opacity .25s ease;}
+  .mini-player.show{transform:translate(-50%, 0); opacity:1; pointer-events:auto;}
+  .mini-player:not(.is-playing) .onair-dot{animation:none; opacity:.45;}
+  .mini-station{display:flex; align-items:center; gap:9px; min-width:0; flex:1;}
+  .mini-copy{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .mini-copy .live{font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600; letter-spacing:1.3px; color:var(--ice);}
+  .mini-copy .title{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:700; color:var(--white);}
+  .mini-toggle{width:36px; height:36px; flex:0 0 36px; border:1px solid rgba(159,232,239,.28); border-radius:50%; background:var(--petrol); color:var(--white); cursor:pointer; font-size:14px; line-height:1; transition:background .2s ease, transform .2s ease;}
+  .mini-toggle:hover{background:var(--petrol-light); color:var(--navy-0); transform:scale(1.06);}
+  .mini-volume{display:flex; align-items:center; gap:8px; color:var(--ice);}
+  .mini-volume svg{width:16px; height:16px; flex:0 0 16px;}
+  .mini-volume input{width:94px; accent-color:var(--petrol-light); cursor:pointer;}
   .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; z-index:110;}
   .burger span{width:24px; height:2px; background:var(--white); display:block;}
 
@@ -335,6 +347,8 @@
     nav.links.open{transform:translateX(0);}
     .burger{display:flex;}
     .onair-pill{display:none;}
+    .mini-player{bottom:14px; gap:12px; padding:10px 12px 10px 14px;}
+    .mini-volume input{width:72px;}
     .hero{padding-top:130px;}
     .section-pad{padding:76px 0;}
     .info-card, .soon-card{padding:28px;}
@@ -668,6 +682,21 @@
   </div>
 </footer>
 
+<aside class="mini-player" id="miniPlayer" aria-label="Reproductor de Radio de la Ciudad">
+  <div class="mini-station">
+    <span class="onair-dot" aria-hidden="true"></span>
+    <div class="mini-copy">
+      <span class="live" id="miniStatus">EN VIVO</span>
+      <span class="title">Radio de la Ciudad · 103.5 FM</span>
+    </div>
+  </div>
+  <div class="mini-volume">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2-3.74v7.48A4.5 4.5 0 0 0 16.5 12Zm0-8.5v2.06a7 7 0 0 1 0 12.88v2.06a9 9 0 0 0 0-17Z"/></svg>
+    <input type="range" id="volumeControl" min="0" max="100" value="80" aria-label="Volumen de la radio">
+  </div>
+  <button type="button" class="mini-toggle" id="miniToggle" aria-label="Pausar radio">Ⅱ</button>
+</aside>
+
 <div class="verse-popover" id="versePopover">
   <div class="vp-ref" id="vpRef"></div>
   <div class="vp-text" id="vpText"></div>
@@ -729,12 +758,21 @@
   // ---------- live radio stream ----------
   const onAirButton = document.getElementById('onAirButton');
   const onAirLabel = document.getElementById('onAirLabel');
+  const miniPlayer = document.getElementById('miniPlayer');
+  const miniToggle = document.getElementById('miniToggle');
+  const miniStatus = document.getElementById('miniStatus');
+  const volumeControl = document.getElementById('volumeControl');
   const radioStream = new Audio('https://cdn.instream.audio:8033/stream');
   radioStream.preload = 'none';
+  radioStream.volume = Number(volumeControl.value) / 100;
 
   function updateOnAirButton(isPlaying) {
     onAirButton.setAttribute('aria-pressed', String(isPlaying));
     onAirLabel.textContent = isPlaying ? 'PAUSAR RADIO' : 'ESCUCHAR EN VIVO';
+    miniPlayer.classList.toggle('is-playing', isPlaying);
+    miniStatus.textContent = isPlaying ? 'EN VIVO' : 'EN PAUSA';
+    miniToggle.textContent = isPlaying ? 'Ⅱ' : '▶';
+    miniToggle.setAttribute('aria-label', isPlaying ? 'Pausar radio' : 'Reproducir radio');
   }
   onAirButton.addEventListener('click', async () => {
     if (!radioStream.paused) {
@@ -748,7 +786,14 @@
       setTimeout(() => updateOnAirButton(false), 3000);
     }
   });
-  radioStream.addEventListener('play', () => updateOnAirButton(true));
+  miniToggle.addEventListener('click', () => onAirButton.click());
+  volumeControl.addEventListener('input', () => {
+    radioStream.volume = Number(volumeControl.value) / 100;
+  });
+  radioStream.addEventListener('play', () => {
+    miniPlayer.classList.add('show');
+    updateOnAirButton(true);
+  });
   radioStream.addEventListener('pause', () => updateOnAirButton(false));
   radioStream.addEventListener('error', () => updateOnAirButton(false));
 
