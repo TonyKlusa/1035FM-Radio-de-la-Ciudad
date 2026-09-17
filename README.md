@@ -1,80 +1,47 @@
 # Radio de la Ciudad · 103.5 FM
 
-Sitio web "DE PRUEBA" de **Radio de la Ciudad 103.5 FM**, emisora de Resistencia, Chaco. Reúne la programación, mensajes, información de contacto y un reproductor para escuchar la transmisión en vivo.
+Sitio web de **Radio de la Ciudad 103.5 FM**, emisora de Resistencia, Chaco. Reúne la programación, mensajes, información de contacto y un reproductor para escuchar la transmisión en vivo.
 
-**Sitio publicado:** [tonyklusa.github.io/1035FM-Radio-de-la-Ciudad](https://tonyklusa.github.io/1035FM-Radio-de-la-Ciudad/)
+🌐 **Sitio publicado:** [tonyklusa.github.io/1035FM-Radio-de-la-Ciudad](https://tonyklusa.github.io/1035FM-Radio-de-la-Ciudad)
 
-## Características
+---
 
-- Reproductor de radio en vivo conectado al stream de la emisora.
-- Mini reproductor fijo con pausa/reproducción y control de volumen.
-- Identidad visual personalizada con ecualizador animado de 10 bandas.
-- Sintonizador FM visual para la frecuencia 103.5.
-- Secciones de presentación, programación, app, mensajes y contacto.
-- Navegación adaptable para escritorio y dispositivos móviles.
-- Enlaces a contenido externo, programación y canales oficiales.
+## ✨ Características
 
-## Tecnologías
+- 🎙️ **Reproductor de radio en vivo** conectado al stream de la emisora.
+- 🎚️ **Mini reproductor fijo** con pausa/reproducción y control de volumen.
+- 📻 **Sintonizador FM visual** para la frecuencia 103.5.
+- 🎵 **Ecualizador animado de 10 bandas** como identidad visual.
+- 🎓 **Banner de Cursos Gratuitos** con carrusel vertical y links a cada curso.
+- 📺 **Última prédica automática** — carga el video más reciente de la lista de YouTube de Iglesia de la Ciudad.
+- 📱 **Diseño responsive** para escritorio, tablet y dispositivos móviles.
+- 💬 **Botón flotante de WhatsApp** y tarjeta de contacto clickeable.
+- 🔗 Enlaces a contenido externo, programación y canales oficiales.
 
-- HTML5
-- CSS3 (variables, animaciones y diseño responsive)
-- JavaScript nativo
-- Google Fonts: Fraunces, Manrope e IBM Plex Mono
-- GitHub Pages para la publicación estática
+---
 
-No requiere instalación de dependencias ni proceso de compilación.
+## 🛠️ Tecnologías
 
-## Ejecutar localmente
+- **HTML5**
+- **CSS3** (variables, animaciones, diseño responsive, mask-image)
+- **JavaScript nativo** (sin frameworks)
+- **Google Fonts:** Fraunces, Manrope, IBM Plex Mono
+- **YouTube RSS** (a través de `allorigins.win`) para la última prédica
+- **GitHub Pages** para la publicación estática
 
-1. Cloná el repositorio:
+Sin dependencias, sin proceso de compilación.
 
-   ```bash
-   git clone https://github.com/TonyKlusa/1035FM-Radio-de-la-Ciudad.git
-   ```
+---
 
-2. Abrí la carpeta del proyecto.
+## 🚀 Ejecutar localmente
 
-3. Abrí `index.html` en un navegador, o iniciá un servidor estático local. Por ejemplo:
+```bash
+# Clonar el repositorio
+git clone https://github.com/TonyKlusa/1035FM-Radio-de-la-Ciudad.git
 
-   ```bash
-   npx serve .
-   ```
+# Entrar a la carpeta
+cd 1035FM-Radio-de-la-Ciudad
 
-## Estructura
-
-```text
-.
-├── index.html    # Sitio completo: estructura, estilos y comportamiento
-└── README.md     # Documentación del proyecto
-```
-
-## Radio en vivo
-
-El reproductor utiliza la transmisión:
-
-```text
-https://cdn.instream.audio:8033/stream
-```
-
-Por las políticas de los navegadores, la reproducción solo comienza después de una interacción de la persona usuaria con el botón **Escuchar en vivo**.
-
-## Publicación
-
-El proyecto está configurado para publicarse con GitHub Pages desde la raíz (`/`) de la rama `main`. Cada `git push origin main` actualiza el sitio después del tiempo de despliegue de GitHub Pages.
-
-## Mantenimiento
-
-- Actualizá el contenido directamente en `index.html`.
-- Probá los cambios en escritorio y celular antes de publicarlos.
-- Verificá periódicamente que el stream de radio continúe disponible.
-- Para publicar cambios:
-
-  ```bash
-  git add index.html README.md
-  git commit -m "Describe el cambio realizado"
-  git push origin main
-  ```
-
-## Créditos
-
-Desarrollado para **Radio de la Ciudad · FM 103.5**.
+# Abrir index.html en el navegador
+# o levantar un servidor local:
+npx serve .
