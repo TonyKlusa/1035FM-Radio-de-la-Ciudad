@@ -651,14 +651,15 @@
 
     <div class="sermon-grid reveal">
       <div class="video-card">
-        <div class="video-frame">
-          <iframe
-            src="https://www.youtube.com/embed/VcZ-VXWfseY?list=PLc2xXXwpj9WniCu323iCd0Qmy-W38nWFE"
-            title="Mensajes de Iglesia de la Ciudad"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
-        </div>
+          <div class="video-frame">
+            <iframe 
+              id="youtube_video"
+              src="" 
+              title="Mensajes de Iglesia de la Ciudad"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
       </div>
     </div>
 
@@ -953,7 +954,31 @@
     form.reset();
     setTimeout(() => status.classList.remove('show'), 6000);
   });
-</script>
 
+  (function loadLatestSermon() {
+    const PLAYLIST_ID = 'PLc2xXXwpj9WniCu323iCd0Qmy-W38nWFE';
+    const RSS_URL = 'https://www.youtube.com/feeds/videos.xml?playlist_id=' + PLAYLIST_ID;
+    const API_URL = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(RSS_URL);
+
+    fetch(API_URL)
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        if (data.items && data.items.length > 0) {
+          // El primer item del feed es el video más reciente
+          var videoLink = data.items[0].link;
+          var videoId = videoLink.split('v=')[1].split('&')[0];
+          
+          document.getElementById('youtube_video').src = 
+            'https://www.youtube.com/embed/' + videoId + '?rel=0';
+        }
+      })
+      .catch(function(error) {
+        console.warn('No se pudo cargar la última prédica:', error);
+        // Fallback: si falla, muestra la lista completa
+        document.getElementById('youtube_video').src = 
+          'https://www.youtube.com/embed/videoseries?list=' + PLAYLIST_ID;
+      });
+  })();
+</script>
 </body>
 </html>
