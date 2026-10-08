@@ -87,8 +87,10 @@
   }
   .mini-player{position:fixed; left:50%; bottom:22px; z-index:200; display:flex; align-items:center; gap:18px; width:min(520px, calc(100vw - 32px)); padding:12px 14px 12px 18px; border:1px solid rgba(159,232,239,.26); border-radius:12px; background:rgba(11,23,33,.94); box-shadow:0 20px 50px rgba(0,0,0,.42); backdrop-filter:blur(14px); transform:translate(-50%, calc(100% + 30px)); opacity:0; pointer-events:none; transition:transform .35s ease, opacity .25s ease;}
   .mini-player.show{transform:translate(-50%, 0); opacity:1; pointer-events:auto;}
+  .mini-player.is-positioned{bottom:auto; transform:none; transition:opacity .25s ease;}
+  .mini-station{display:flex; align-items:center; gap:9px; min-width:0; flex:1; cursor:grab; touch-action:none; user-select:none;}
+  .mini-player.is-dragging .mini-station{cursor:grabbing;}
   .mini-player:not(.is-playing) .onair-dot{animation:none; opacity:.45;}
-  .mini-station{display:flex; align-items:center; gap:9px; min-width:0; flex:1;}
   .mini-copy{display:flex; flex-direction:column; gap:3px; min-width:0;}
   .mini-copy .live{font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600; letter-spacing:1.3px; color:var(--ice);}
   .mini-copy .title{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:700; color:var(--white);}
@@ -879,8 +881,37 @@
   const miniToggle = document.getElementById('miniToggle');
   const miniStatus = document.getElementById('miniStatus');
   const volumeControl = document.getElementById('volumeControl');
+  const miniStation = miniPlayer.querySelector('.mini-station');
   const radioStream = new Audio('https://direct-ar1.cdnrad.com:9443/listen/radiodelaciudad1035');  radioStream.preload = 'none';
   radioStream.volume = Number(volumeControl.value) / 100;
+
+  let dragState = null;
+  miniStation.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button !== 0) return;
+    const rect = miniPlayer.getBoundingClientRect();
+    dragState = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, left: rect.left, top: rect.top };
+    miniPlayer.classList.add('is-positioned', 'is-dragging');
+    miniPlayer.style.left = rect.left + 'px';
+    miniPlayer.style.top = rect.top + 'px';
+    miniStation.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+  miniStation.addEventListener('pointermove', event => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    const maxLeft = Math.max(8, window.innerWidth - miniPlayer.offsetWidth - 8);
+    const maxTop = Math.max(8, window.innerHeight - miniPlayer.offsetHeight - 8);
+    const left = Math.min(maxLeft, Math.max(8, dragState.left + event.clientX - dragState.startX));
+    const top = Math.min(maxTop, Math.max(8, dragState.top + event.clientY - dragState.startY));
+    miniPlayer.style.left = left + 'px';
+    miniPlayer.style.top = top + 'px';
+  });
+  function endMiniPlayerDrag(event) {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    dragState = null;
+    miniPlayer.classList.remove('is-dragging');
+  }
+  miniStation.addEventListener('pointerup', endMiniPlayerDrag);
+  miniStation.addEventListener('pointercancel', endMiniPlayerDrag);
 
   function updateOnAirButton(isPlaying) {
     onAirButton.setAttribute('aria-pressed', String(isPlaying));
