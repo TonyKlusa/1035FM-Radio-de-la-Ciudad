@@ -14,6 +14,7 @@ Sitio web de **Radio de la Ciudad 103.5 FM**, emisora de Resistencia, Chaco. Re�
 - 🎵 **Ecualizador animado de 10 bandas** como identidad visual.
 - 🎓 **Banner de Cursos Gratuitos** con carrusel vertical y links a cada curso.
 - 📺 **Última prédica automática** — carga el video más reciente de la lista de YouTube de Iglesia de la Ciudad.
+-🎵  **Última prédica automática de Spotify** — carga el audio más reciente de la lista de Spotify de Iglesia de la Ciudad.
 - 📱 **Diseño responsive** para escritorio, tablet y dispositivos móviles.
 - 💬 **Botón flotante de WhatsApp** y tarjeta de contacto clickeable.
 - 🔗 Enlaces a contenido externo, programación y canales oficiales.
