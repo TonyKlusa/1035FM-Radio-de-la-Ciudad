@@ -24,7 +24,7 @@ Sitio web oficial de Radio de la Ciudad 103.5 FM, emisora de Resistencia, Chaco.
 
 🎨 Animaciones al hacer scroll con IntersectionObserver (fade-in + translateY).
 
-🔗 Enlaces a programación completa (Google Drive) y redes oficiales de Iglesia de la Ciudad.
+🔗 Enlaces a la programación completa en Google Sheets y redes oficiales de Iglesia de la Ciudad.
 
 🛠️ Tecnologías
 HTML5
