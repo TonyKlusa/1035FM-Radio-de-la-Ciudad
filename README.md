@@ -48,7 +48,7 @@ text
 1035FM-Radio-de-la-Ciudad/
 ├── index.html       # Sitio completo (HTML + CSS + JS en un solo archivo)
 ├── README.md        # Este archivo
-└── logo.png         # Logo de la radio (referenciado desde el footer)
+└── Logo.webp        # Logo de la radio (hero)
 El sitio es un único archivo index.html autocontenido. No hay hojas de estilo externas ni scripts separados.
 
 🚀 Ejecutar localmente
