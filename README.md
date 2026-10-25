@@ -24,7 +24,9 @@ Sitio web oficial de Radio de la Ciudad 103.5 FM, emisora de Resistencia, Chaco.
 
 🎨 Animaciones al hacer scroll con IntersectionObserver (fade-in + translateY).
 
-🔗 Enlaces a la programación completa en Google Sheets y redes oficiales de Iglesia de la Ciudad.
+🔗 Enlaces a la programación completa y redes oficiales de Iglesia de la Ciudad.
+
+🗓️ Programación semanal — muestra días, horarios y programas a partir de los datos de `Programacion_limpia.xlsx`.
 
 🛠️ Tecnologías
 HTML5
@@ -32,6 +34,8 @@ HTML5
 CSS3 — variables CSS, animaciones, mask-image, media queries, backdrop-filter
 
 JavaScript nativo — sin frameworks ni dependencias
+
+CSV local — carga de la programación semanal en el navegador, generado desde `Programacion_limpia.xlsx`
 
 Google Fonts: Fraunces (serif), Manrope (sans), IBM Plex Mono (mono)
 
@@ -48,8 +52,10 @@ text
 1035FM-Radio-de-la-Ciudad/
 ├── index.html       # Sitio completo (HTML + CSS + JS en un solo archivo)
 ├── README.md        # Este archivo
-└── Logo.webp        # Logo de la radio (hero)
-El sitio es un único archivo index.html autocontenido. No hay hojas de estilo externas ni scripts separados.
+├── Logo.webp        # Logo de la radio (hero)
+├── Programacion_limpia.xlsx  # Planilla original de programación
+└── programacion.csv          # Datos que carga la sección de programación
+El diseño, los estilos y el JavaScript están dentro de `index.html`; la programación se carga desde `programacion.csv`.
 
 🚀 Ejecutar localmente
 bash
@@ -59,15 +65,13 @@ git clone https://github.com/TonyKlusa/1035FM-Radio-de-la-Ciudad.git
 # Entrar a la carpeta
 cd 1035FM-Radio-de-la-Ciudad
 
-# Opción 1: abrir index.html directo en el navegador
-
-# Opción 2: levantar un servidor local (recomendado para probar el RSS)
+# Levantar un servidor local para que carguen la programación y el RSS
 npx serve .
 # o
 python -m http.server 8000
 Luego abrí http://localhost:8000 (o el puerto que indique el servidor).
 
-Nota: Abrir el archivo directamente con file:// funciona para la mayoría de las funciones, pero la carga del RSS de YouTube puede fallar por CORS. Se recomienda usar un servidor local.
+Nota: La programación se lee desde `programacion.csv`, por lo que hace falta abrir el sitio mediante un servidor local y no directamente con `file://`. Si actualizás la planilla de Excel, actualizá también este CSV.
 
 ⚙️ Configuración y personalización
 🎙️ Cambiar el stream de la radio
@@ -144,7 +148,7 @@ Sección	Anclaje	Descripción
 Hero	#inicio	Presentación con sintonizador FM animado y botón "Escuchar"
 Nosotros	#nosotros	Historia de la radio + 5 pasos del journey del creyente con versículos
 App	#app	Link a Google Play
-Programación	#programacion	Resumen + descarga de la planilla completa
+Programación	#programacion	Horarios semanales cargados desde programacion.csv y descarga de la planilla completa
 Próximamente	—	Aviso del canal de WhatsApp (con botón de contacto)
 Mensajes	#mensajes	Última prédica YouTube + show Spotify
 Contacto	#contacto	Tarjeta con dirección, teléfono, email y WhatsApp

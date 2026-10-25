@@ -260,18 +260,36 @@
 
   /* ---------- schedule ---------- */
   .schedule{background:var(--navy-1);}
-  .schedule-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center;}
-  .clock-badge{
-    width:220px; height:220px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
-    flex-direction:column; margin:0 auto; background:var(--navy-2); position:relative;
+  .schedule-content{max-width:900px; margin:0 auto;}
+  .schedule-intro{max-width:680px; margin-bottom:34px;}
+  .schedule-intro h2{font-size:clamp(28px,3.2vw,38px); line-height:1.16; margin-bottom:20px; color:var(--white);}
+  .schedule-intro p{color:var(--muted); font-size:16.5px; line-height:1.75;}
+  .schedule-tools{display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:16px;}
+  .schedule-days{display:flex; gap:8px; flex-wrap:wrap;}
+  .schedule-day{
+    border:1px solid var(--line); border-radius:999px; padding:9px 14px; background:transparent;
+    color:var(--muted); font:600 12px 'IBM Plex Mono', monospace; cursor:pointer; transition:all .2s ease;
   }
-  .clock-badge::before{content:''; position:absolute; inset:14px; border-radius:50%; border:1px dashed rgba(159,232,239,0.25);}
-  .clock-badge .big{font-family:'Fraunces', serif; font-size:52px; font-weight:600; color:var(--white);}
-  .clock-badge .cap{font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2px; color:var(--ice); margin-top:4px;}
-  .schedule-list{margin-top:26px; display:flex; flex-direction:column;}
-  .schedule-list div{display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line); font-size:14.5px; color:var(--muted);}
-  .schedule-list div span:first-child{color:var(--white); font-weight:600;}
-  .schedule-list div span:last-child{font-family:'IBM Plex Mono', monospace; font-size:12.5px;}
+  .schedule-day:hover,.schedule-day[aria-pressed="true"]{border-color:var(--petrol-light); color:var(--white); background:rgba(63,195,211,.1);}
+  .schedule-day:focus-visible{outline:2px solid var(--ice); outline-offset:3px;}
+  .schedule-status{color:var(--muted); font:11px 'IBM Plex Mono', monospace;}
+  .schedule-table-wrap{max-height:580px; overflow:auto; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.02);}
+  .schedule-table{width:100%; border-collapse:collapse; text-align:left;}
+  .schedule-table thead{position:sticky; top:0; z-index:1; background:var(--navy-2);}
+  .schedule-table th,.schedule-table td{padding:13px 18px; border-bottom:1px solid var(--line);}
+  .schedule-table thead th{color:var(--ice); font:500 11px 'IBM Plex Mono',monospace; letter-spacing:1px;}
+  .schedule-table tbody th{width:120px; color:var(--ice); font:500 13px 'IBM Plex Mono',monospace; white-space:nowrap;}
+  .schedule-table tbody td{color:var(--paper); font-size:14px; line-height:1.5;}
+  .schedule-table tbody tr:last-child th,.schedule-table tbody tr:last-child td{border-bottom:0;}
+  .schedule-table .schedule-empty{padding:28px 18px; color:var(--muted); text-align:center;}
+  @media (max-width:760px){
+    .schedule-intro{margin-bottom:26px;}
+    .schedule-tools{align-items:flex-start;}
+    .schedule-days{gap:6px;}
+    .schedule-day{padding:8px 11px; font-size:11px;}
+    .schedule-table th,.schedule-table td{padding:12px;}
+    .schedule-table tbody th{width:auto;}
+  }
 
   /* ---------- proximamente ---------- */
   .soon-sec{background:radial-gradient(900px 500px at 15% 20%, #0F3A46 0%, var(--navy-0) 60%), var(--navy-0); color:var(--white);}
@@ -380,7 +398,7 @@
   /* ---------- responsive ---------- */
   @media (max-width:980px){
     .hero-grid{grid-template-columns:1fr; gap:44px;}
-    .about-grid, .app-grid, .schedule-grid, .contact-grid{grid-template-columns:1fr; gap:44px;}
+    .about-grid, .app-grid, .contact-grid{grid-template-columns:1fr; gap:44px;}
     .app-grid{justify-items:start;}
     .hero-watermark{font-size:44vw; top:14%;}
   }
@@ -428,9 +446,6 @@
     .play-card{width:100%; max-width:280px;}
     .app-feat{flex-direction:column; gap:14px;}
     .app-feat div{width:100%;}
-    .schedule-grid{gap:32px;}
-    .clock-badge{width:160px; height:160px;}
-    .clock-badge .big{font-size:38px;}
     .contact-grid{gap:32px;}
     .info-card{padding:24px 20px;}
     .soon-card{gap:24px; padding:28px 20px;}
@@ -488,7 +503,7 @@
       <a href="#inicio">Inicio</a>
       <a href="#nosotros">Nosotros</a>
       <a href="#app">App</a>
-      <a href="https://docs.google.com/spreadsheets/d/16mH4XmEM-8fy5DKYiAkEosZXvMDjJUic3PRTdbnNMCU/edit?usp=sharing" target="_blank" rel="noopener">Programación</a>
+      <a href="#programacion">Programación</a>
       <a href="#mensajes">Mensajes</a>
       <a href="#contacto">Contacto</a>
     </nav>
@@ -513,7 +528,7 @@
         </div>
         <p class="lead">Radio de la Ciudad transmite prédicas, alabanza y enseñanza para que la Palabra de Dios llegue a cada rincón de tu día, estés donde estés.</p>
         <div class="btn-row">
-          <a class="btn btn-petrol" href="https://docs.google.com/spreadsheets/d/16mH4XmEM-8fy5DKYiAkEosZXvMDjJUic3PRTdbnNMCU/edit?usp=sharing" target="_blank" rel="noopener">Ver programación completa</a>
+          <a class="btn btn-petrol" href="#programacion">Ver programación</a>
           <a class="btn btn-ghost" href="#app">Cómo escucharnos</a>
         </div>
       </div>
@@ -649,25 +664,24 @@
 
 <section class="schedule section-pad" id="programacion">
   <div class="wrap">
-    <div class="schedule-grid">
-      <div class="reveal">
+    <div class="schedule-content reveal">
+      <div class="schedule-intro">
         <div class="eyebrow">En el aire</div>
-        <h2 class="serif" style="font-size:clamp(28px,3.2vw,38px); line-height:1.16; margin-bottom:20px; color:var(--white);">Programación pensada para acompañarte todo el día.</h2>
-        <p style="color:var(--muted); font-size:16.5px; line-height:1.75; max-width:480px;">Descargá la planilla completa de programación de Radio de la Ciudad. Está lista para que también la retransmitas en tu propio dial — sumate a compartir esperanza.</p>
-        <div class="schedule-list mono">
-          <div><span>Prédicas y enseñanza</span><span>Todo el día</span></div>
-          <div><span>Alabanza y adoración</span><span>Todo el día</span></div>
-          <div><span>Mensajes de fe</span><span>Todo el día</span></div>
-        </div>
-        <div class="btn-row" style="margin-top:30px;">
-          <a class="btn btn-petrol" href="https://docs.google.com/spreadsheets/d/16mH4XmEM-8fy5DKYiAkEosZXvMDjJUic3PRTdbnNMCU/edit?usp=sharing" target="_blank" rel="noopener">Ver programación completa</a>
-        </div>
+        <h2 class="serif">Programación pensada para acompañarte todo el día.</h2>
+        <p>Consultá los horarios y programas de cada día según la programación de Radio de la Ciudad.</p>
       </div>
-      <div class="reveal">
-        <div class="clock-badge">
-          <div class="big mono">24</div>
-          <div class="cap">HORAS AL AIRE</div>
-        </div>
+      <div class="schedule-tools">
+        <div class="schedule-days" id="scheduleDays" aria-label="Seleccionar día de programación"></div>
+        <div class="schedule-status" id="scheduleStatus" role="status" aria-live="polite">Cargando programación…</div>
+      </div>
+      <div class="schedule-table-wrap" tabindex="0" aria-label="Horarios y programas del día seleccionado">
+        <table class="schedule-table">
+          <thead><tr><th scope="col">HORARIO</th><th scope="col">PROGRAMA</th></tr></thead>
+          <tbody id="scheduleRows"><tr><td class="schedule-empty" colspan="2">Cargando horarios…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="btn-row" style="margin-top:24px;">
+        <a class="btn btn-petrol" href="Programacion_limpia.xlsx" download>Descargar planilla completa</a>
       </div>
     </div>
   </div>
@@ -799,7 +813,7 @@
         <a href="#inicio">Inicio</a>
         <a href="#nosotros">Nosotros</a>
         <a href="#app">App</a>
-        <a href="https://docs.google.com/spreadsheets/d/16mH4XmEM-8fy5DKYiAkEosZXvMDjJUic3PRTdbnNMCU/edit?usp=sharing" target="_blank" rel="noopener">Programación</a>
+        <a href="#programacion">Programación</a>
         <a href="#mensajes">Mensajes</a>
         <a href="#contacto">Contacto</a>
       </div>
@@ -887,6 +901,140 @@
   const navLinks = document.getElementById('navLinks');
   burger.addEventListener('click', () => navLinks.classList.toggle('open'));
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // ---------- weekly schedule ----------
+  const scheduleCsvUrl = './programacion.csv';
+  const scheduleDaysElement = document.getElementById('scheduleDays');
+  const scheduleRowsElement = document.getElementById('scheduleRows');
+  const scheduleStatus = document.getElementById('scheduleStatus');
+
+  function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let insideQuotes = false;
+    const source = text.replace(/^\uFEFF/, '');
+
+    for (let index = 0; index < source.length; index += 1) {
+      const character = source[index];
+      if (character === '"') {
+        if (insideQuotes && source[index + 1] === '"') {
+          field += '"';
+          index += 1;
+        } else {
+          insideQuotes = !insideQuotes;
+        }
+      } else if (character === ',' && !insideQuotes) {
+        row.push(field);
+        field = '';
+      } else if ((character === '\n' || character === '\r') && !insideQuotes) {
+        if (character === '\r' && source[index + 1] === '\n') index += 1;
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = '';
+      } else {
+        field += character;
+      }
+    }
+
+    if (field || row.length) {
+      row.push(field);
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  function renderSchedule(days, entries, selectedDayIndex) {
+    scheduleDaysElement.replaceChildren();
+    days.forEach((day, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'schedule-day';
+      button.textContent = day.label;
+      button.setAttribute('aria-pressed', 'false');
+      button.addEventListener('click', () => showScheduleDay(days, entries, index));
+      scheduleDaysElement.append(button);
+    });
+    showScheduleDay(days, entries, selectedDayIndex);
+  }
+
+  function showScheduleDay(days, entries, selectedDayIndex) {
+    Array.from(scheduleDaysElement.children).forEach((button, index) => {
+      button.setAttribute('aria-pressed', String(index === selectedDayIndex));
+    });
+    scheduleRowsElement.replaceChildren();
+    const day = days[selectedDayIndex];
+    const dayEntries = entries
+      .map(entry => ({ time: entry.time, program: entry.programs[day.column].trim() }))
+      .filter(entry => entry.program);
+
+    if (!dayEntries.length) {
+      const emptyRow = document.createElement('tr');
+      const emptyCell = document.createElement('td');
+      emptyCell.className = 'schedule-empty';
+      emptyCell.colSpan = 2;
+      emptyCell.textContent = 'No hay programas cargados para este día.';
+      emptyRow.append(emptyCell);
+      scheduleRowsElement.append(emptyRow);
+      return;
+    }
+
+    dayEntries.forEach(entry => {
+      const row = document.createElement('tr');
+      const timeCell = document.createElement('th');
+      const programCell = document.createElement('td');
+      timeCell.scope = 'row';
+      timeCell.textContent = entry.time;
+      programCell.textContent = entry.program;
+      row.append(timeCell, programCell);
+      scheduleRowsElement.append(row);
+    });
+  }
+
+  async function loadSchedule() {
+    try {
+      const response = await fetch(scheduleCsvUrl);
+      if (!response.ok) throw new Error(`El archivo de programación respondió ${response.status}`);
+
+      const csvRows = parseCsv(await response.text());
+      const headerRowIndex = csvRows.findIndex(row =>
+        row.some(cell => cell.trim().toLocaleUpperCase('es-AR') === 'HORA')
+      );
+      if (headerRowIndex === -1) throw new Error('No se encontró la columna de horarios.');
+
+      const headers = csvRows[headerRowIndex];
+      const timeColumn = headers.findIndex(cell => cell.trim().toLocaleUpperCase('es-AR') === 'HORA');
+      const days = headers
+        .map((label, column) => ({ label: label.trim(), column }))
+        .filter(day => day.column > timeColumn && day.label);
+      const entries = csvRows.slice(headerRowIndex + 1)
+        .map(row => ({ time: (row[timeColumn] || '').trim(), programs: row }))
+        .filter(entry => /^\d{1,2}:\d{2}$/.test(entry.time));
+      if (!days.length || !entries.length) throw new Error('La planilla no contiene días u horarios para mostrar.');
+
+      const weekday = new Intl.DateTimeFormat('es-AR', {
+        weekday: 'long',
+        timeZone: 'America/Argentina/Buenos_Aires'
+      }).format(new Date()).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const todayIndex = days.findIndex(day => day.label.toLowerCase().normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '').replace(/s$/, '') === weekday);
+      renderSchedule(days, entries, todayIndex === -1 ? 0 : todayIndex);
+      scheduleStatus.textContent = 'Programación cargada correctamente.';
+    } catch (error) {
+      scheduleStatus.textContent = 'No se pudo cargar la programación. Podés descargar la planilla completa.';
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.className = 'schedule-empty';
+      cell.colSpan = 2;
+      cell.textContent = 'No pudimos cargar los horarios. Probá nuevamente más tarde o descargá la planilla completa.';
+      row.append(cell);
+      scheduleRowsElement.replaceChildren(row);
+      console.error('No se pudo cargar el archivo de programación.', error);
+    }
+  }
+
+  loadSchedule();
 
   // ---------- live radio stream ----------
   const onAirButton = document.getElementById('onAirButton');
