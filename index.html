@@ -850,6 +850,7 @@
   <a class="vp-link" id="vpLink" href="#" target="_blank" rel="noopener">LEER VERSÍCULO COMPLETO (PDT) ↗</a>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 <script>
   const VERSES = {
     '2P3.9': { ref: '2ª Pedro 3:9', text: 'Dios no tarda en cumplir lo que promete: es paciente porque no quiere que nadie se pierda, sino que todos se aparten del pecado y encuentren salvación.', url: 'https://www.bible.com/es/bible/197/2PE.3.9.PDT' },
@@ -1044,8 +1045,17 @@
   const miniStatus = document.getElementById('miniStatus');
   const volumeControl = document.getElementById('volumeControl');
   const miniStation = miniPlayer.querySelector('.mini-station');
-  const radioStream = new Audio('https://direct-ar1.cdnrad.com:9443/listen/radiodelaciudad1035');  radioStream.preload = 'none';
+  const radioStreamSources = [
+    'https://live-ar1.cdnrad.com/hls/radio-1739/live.m3u8',
+    'https://direct-ar1.cdnrad.com:9443/hls/radio-1739/live.m3u8'
+  ];
+  const radioStream = new Audio();
+  radioStream.preload = 'none';
   radioStream.volume = Number(volumeControl.value) / 100;
+  let radioHls = null;
+  let radioStreamSourceIndex = 0;
+  let connectionErrorTimeout = null;
+  let radioConnecting = false;
 
   let dragState = null;
   miniStation.addEventListener('pointerdown', event => {
@@ -1076,6 +1086,7 @@
   miniStation.addEventListener('pointercancel', endMiniPlayerDrag);
 
   function updateOnAirButton(isPlaying) {
+    radioConnecting = false;
     onAirButton.setAttribute('aria-pressed', String(isPlaying));
     onAirLabel.textContent = isPlaying ? 'PAUSAR' : 'ESCUCHAR';
     miniPlayer.classList.toggle('is-playing', isPlaying);
@@ -1083,16 +1094,96 @@
     miniToggle.textContent = isPlaying ? 'Ⅱ' : '▶';
     miniToggle.setAttribute('aria-label', isPlaying ? 'Pausar radio' : 'Reproducir radio');
   }
+
+  function showRadioConnectionError(error) {
+    radioConnecting = false;
+    console.error('No se pudo iniciar el stream de Radio de la Ciudad.', error);
+    onAirButton.setAttribute('aria-pressed', 'false');
+    onAirLabel.textContent = 'NO SE PUDO CONECTAR';
+    miniPlayer.classList.remove('is-playing');
+    miniStatus.textContent = 'ERROR DE CONEXIÓN';
+    miniToggle.textContent = '▶';
+    miniToggle.setAttribute('aria-label', 'Reproducir radio');
+    clearTimeout(connectionErrorTimeout);
+    connectionErrorTimeout = setTimeout(() => updateOnAirButton(false), 4000);
+  }
+
+  async function playRadio() {
+    const supportsNativeHls = radioStream.canPlayType('application/vnd.apple.mpegurl');
+    const isSafari = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)
+      && /Safari/.test(navigator.userAgent)
+      && !/Chrome|CriOS|Edg|OPR/.test(navigator.userAgent);
+    if (supportsNativeHls && isSafari) {
+      radioStream.src = radioStreamSources[radioStreamSourceIndex];
+      await radioStream.play();
+      return;
+    }
+
+    if (!window.Hls || !Hls.isSupported()) {
+      if (supportsNativeHls) {
+        radioStream.src = radioStreamSources[radioStreamSourceIndex];
+        await radioStream.play();
+        return;
+      }
+      throw new Error('Este navegador no admite la reproducción HLS necesaria para la transmisión.');
+    }
+
+    if (!radioHls) {
+      radioStreamSourceIndex = 0;
+      radioHls = new Hls();
+      let firstPlaybackStarted = false;
+      let manifestPlaybackTimeout = null;
+      const startPlayback = () => {
+        if (firstPlaybackStarted) return;
+        firstPlaybackStarted = true;
+        clearTimeout(manifestPlaybackTimeout);
+        radioStream.play().catch(showRadioConnectionError);
+      };
+      radioHls.on(Hls.Events.FRAG_BUFFERED, startPlayback);
+      radioHls.on(Hls.Events.MANIFEST_PARSED, () => {
+        manifestPlaybackTimeout = setTimeout(startPlayback, 1500);
+      });
+      radioHls.on(Hls.Events.ERROR, (_event, data) => {
+        if (!data.fatal) return;
+        if (radioStreamSourceIndex < radioStreamSources.length - 1) {
+          radioStreamSourceIndex += 1;
+          radioHls.loadSource(radioStreamSources[radioStreamSourceIndex]);
+          return;
+        }
+        radioHls.destroy();
+        radioHls = null;
+        showRadioConnectionError(new Error(`Error HLS fatal: ${data.type} (${data.details})`));
+      });
+      radioHls.loadSource(radioStreamSources[radioStreamSourceIndex]);
+      radioHls.attachMedia(radioStream);
+    }
+    onAirLabel.textContent = 'CONECTANDO...';
+    miniStatus.textContent = 'CONECTANDO...';
+  }
+
   onAirButton.addEventListener('click', async () => {
     if (!radioStream.paused) {
       radioStream.pause();
       return;
     }
+    if (radioConnecting) return;
+    radioConnecting = true;
     try {
-      await radioStream.play();
+      await playRadio();
     } catch (error) {
-      onAirLabel.textContent = 'NO SE PUDO CONECTAR';
-      setTimeout(() => updateOnAirButton(false), 3000);
+      if (radioStream.canPlayType('application/vnd.apple.mpegurl')
+        && radioStreamSourceIndex < radioStreamSources.length - 1) {
+        radioStreamSourceIndex += 1;
+        radioStream.src = radioStreamSources[radioStreamSourceIndex];
+        try {
+          await radioStream.play();
+          return;
+        } catch (fallbackError) {
+          showRadioConnectionError(fallbackError);
+          return;
+        }
+      }
+      showRadioConnectionError(error);
     }
   });
   miniToggle.addEventListener('click', () => onAirButton.click());
@@ -1100,11 +1191,16 @@
     radioStream.volume = Number(volumeControl.value) / 100;
   });
   radioStream.addEventListener('play', () => {
+    clearTimeout(connectionErrorTimeout);
     miniPlayer.classList.add('show');
     updateOnAirButton(true);
   });
   radioStream.addEventListener('pause', () => updateOnAirButton(false));
-  radioStream.addEventListener('error', () => updateOnAirButton(false));
+  radioStream.addEventListener('error', () => {
+    if (!radioHls && radioStream.error) {
+      showRadioConnectionError(new Error(`Error de audio HTML: ${radioStream.error.code}`));
+    }
+  });
 
   // ---------- circular tuning dial ----------
   const CENTER = 200;

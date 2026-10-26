@@ -77,9 +77,9 @@ Nota: La programación se lee desde `programacion.csv`, por lo que hace falta ab
 🎙️ Cambiar el stream de la radio
 En la sección // ---------- live radio stream ---------- del JavaScript, modificá la URL:
 
-javascript
-const radioStream = new Audio('https://direct-ar1.cdnrad.com:9443/listen/radiodelaciudad1035');
-Reemplazá por la URL del stream deseado. Formato compatible: HTTP/HTTPS directo (MP3, AAC, OGG).
+El reproductor usa la transmisión HLS de INOVANEX (`https://live-ar1.cdnrad.com/hls/radio-1739/live.m3u8`) y una URL secundaria por si falla la principal. El enlace `https://player.cdnrad.com/radiodelaciudad1035` abre una página web del proveedor, no es una URL de audio.
+
+La página carga HLS.js para navegadores que no reproducen HLS de forma nativa. Si cambiás de proveedor, reemplazá las dos URL en `radioStreamSources` dentro de esa sección.
 
 📺 Cambiar la lista de YouTube
 Buscá la función loadLatestSermon():
